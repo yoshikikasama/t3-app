@@ -1,0 +1,5 @@
+修正後の環境変数：
+DATABASE_URL=postgresql://postgres.wrkthidshbsdaahudydx:jqr8ftz1tdr1cjz%21ACH@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres
+
+DIRECT_URL=postgresql://postgres.wrkthidshbsdaahudydx:jqr8ftz1tdr1cjz%21ACH@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&conne
+ction_limit=1
