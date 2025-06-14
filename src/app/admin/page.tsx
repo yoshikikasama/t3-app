@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function AdminDashboardPage() {
   const { data: session, status } = useSession();
   const [statusFilter, setStatusFilter] = useState<"PENDING" | "IN_PROGRESS" | "COMPLETED" | undefined>();
