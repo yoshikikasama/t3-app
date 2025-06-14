@@ -1,17 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 
 export default function AdminDashboardPage() {
   const { data: session, status } = useSession();
   const [statusFilter, setStatusFilter] = useState<"PENDING" | "IN_PROGRESS" | "COMPLETED" | undefined>();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { data: recallRequests, isLoading, refetch } = api.recall.getAll.useQuery(
     { status: statusFilter },
     { 
-      enabled: status === "authenticated",
+      enabled: mounted && status === "authenticated",
       retry: false 
     }
   );
@@ -22,7 +27,7 @@ export default function AdminDashboardPage() {
     },
   });
 
-  if (status === "loading") {
+  if (!mounted || status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
