@@ -1,67 +1,156 @@
 import Link from "next/link";
 
-import { LatestPost } from "~/app/_components/post";
 import { auth } from "~/server/auth";
-import { HydrateClient, api } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-	const hello = await api.post.hello({ text: "from tRPC" });
 	const session = await auth();
-
-	if (session?.user) {
-		void api.post.getLatest.prefetch();
-	}
 
 	return (
 		<HydrateClient>
-			<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-				<div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-					<h1 className="font-extrabold text-5xl tracking-tight sm:text-[5rem]">
-						Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-					</h1>
-					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-						<Link
-							className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-							href="https://create.t3.gg/en/usage/first-steps"
-							target="_blank"
-						>
-							<h3 className="font-bold text-2xl">First Steps →</h3>
-							<div className="text-lg">
-								Just the basics - Everything you need to know to set up your
-								database and authentication.
+			<main className="min-h-screen bg-gray-50">
+				{/* Navigation */}
+				<nav className="bg-white shadow-sm border-b">
+					<div className="max-w-7xl mx-auto px-4">
+						<div className="flex justify-between items-center h-16">
+							<div className="flex items-center space-x-8">
+								<Link href="/" className="text-xl font-bold text-gray-900">
+									不良品回収システム
+								</Link>
+								<div className="hidden md:flex space-x-6">
+									<Link href="/recall" className="text-gray-600 hover:text-gray-900">
+										回収申し込み
+									</Link>
+									<Link href="/status" className="text-gray-600 hover:text-gray-900">
+										状況確認
+									</Link>
+									{session && (
+										<Link href="/admin" className="text-gray-600 hover:text-gray-900">
+											管理画面
+										</Link>
+									)}
+								</div>
 							</div>
-						</Link>
-						<Link
-							className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-							href="https://create.t3.gg/en/introduction"
-							target="_blank"
-						>
-							<h3 className="font-bold text-2xl">Documentation →</h3>
-							<div className="text-lg">
-								Learn more about Create T3 App, the libraries it uses, and how
-								to deploy it.
+							<div className="flex items-center space-x-4">
+								{session ? (
+									<div className="flex items-center space-x-4">
+										<span className="text-sm text-gray-600">
+											{session.user?.name || session.user?.email}
+										</span>
+										<Link
+											href="/api/auth/signout"
+											className="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200"
+										>
+											ログアウト
+										</Link>
+									</div>
+								) : (
+									<Link
+										href="/api/auth/signin"
+										className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+									>
+										ログイン
+									</Link>
+								)}
 							</div>
-						</Link>
-					</div>
-					<div className="flex flex-col items-center gap-2">
-						<p className="text-2xl text-white">
-							{hello ? hello.greeting : "Loading tRPC query..."}
-						</p>
-
-						<div className="flex flex-col items-center justify-center gap-4">
-							<p className="text-center text-2xl text-white">
-								{session && <span>Logged in as {session.user?.name}</span>}
-							</p>
-							<Link
-								href={session ? "/api/auth/signout" : "/api/auth/signin"}
-								className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-							>
-								{session ? "Sign out" : "Sign in"}
-							</Link>
 						</div>
 					</div>
+				</nav>
 
-					{session?.user && <LatestPost />}
+				{/* Hero Section */}
+				<div className="bg-white">
+					<div className="max-w-7xl mx-auto py-16 px-4">
+						<div className="text-center">
+							<h1 className="text-4xl font-bold text-gray-900 mb-6">
+								不良品回収システム
+							</h1>
+							<p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+								製品の不具合による回収申し込みから状況確認まで、
+								簡単で安全なオンライン手続きをご提供します。
+							</p>
+
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+								<Link
+									href="/recall"
+									className="bg-blue-600 text-white p-6 rounded-lg hover:bg-blue-700 transition-colors"
+								>
+									<div className="text-center">
+										<div className="text-3xl mb-4">📝</div>
+										<h3 className="text-xl font-semibold mb-2">回収申し込み</h3>
+										<p className="text-blue-100">
+											不良品の回収を申し込む
+										</p>
+									</div>
+								</Link>
+
+								<Link
+									href="/status"
+									className="bg-green-600 text-white p-6 rounded-lg hover:bg-green-700 transition-colors"
+								>
+									<div className="text-center">
+										<div className="text-3xl mb-4">🔍</div>
+										<h3 className="text-xl font-semibold mb-2">状況確認</h3>
+										<p className="text-green-100">
+											申し込み状況を確認する
+										</p>
+									</div>
+								</Link>
+
+								{session && (
+									<Link
+										href="/admin"
+										className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors"
+									>
+										<div className="text-center">
+											<div className="text-3xl mb-4">⚙️</div>
+											<h3 className="text-xl font-semibold mb-2">管理画面</h3>
+											<p className="text-purple-100">
+												申し込みを管理する
+											</p>
+										</div>
+									</Link>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Features Section */}
+				<div className="bg-gray-50 py-16">
+					<div className="max-w-7xl mx-auto px-4">
+						<h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+							簡単3ステップ
+						</h2>
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+							<div className="text-center">
+								<div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+									<span className="text-2xl font-bold text-blue-600">1</span>
+								</div>
+								<h3 className="text-xl font-semibold text-gray-900 mb-2">申し込み</h3>
+								<p className="text-gray-600">
+									お客様情報と製品情報を入力して申し込み
+								</p>
+							</div>
+							<div className="text-center">
+								<div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+									<span className="text-2xl font-bold text-green-600">2</span>
+								</div>
+								<h3 className="text-xl font-semibold text-gray-900 mb-2">確認</h3>
+								<p className="text-gray-600">
+									申し込み番号で進捗状況をいつでも確認
+								</p>
+							</div>
+							<div className="text-center">
+								<div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+									<span className="text-2xl font-bold text-purple-600">3</span>
+								</div>
+								<h3 className="text-xl font-semibold text-gray-900 mb-2">回収</h3>
+								<p className="text-gray-600">
+									担当者が対象製品を安全に回収
+								</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</main>
 		</HydrateClient>

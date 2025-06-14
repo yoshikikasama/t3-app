@@ -57,9 +57,11 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+    role          String    @default("USER") // USER, ADMIN
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    recallRequests RecallRequest[]
 }
 
 model VerificationToken {
@@ -68,4 +70,24 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model RecallRequest {
+    id             String   @id @default(cuid())
+    customerName   String
+    customerEmail  String
+    customerPhone  String
+    customerAddress String
+    productName    String
+    productModel   String
+    serialNumber   String
+    status         String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+    
+    userId         String?
+    user           User?    @relation(fields: [userId], references: [id])
+    
+    @@index([status])
+    @@index([createdAt])
 }
