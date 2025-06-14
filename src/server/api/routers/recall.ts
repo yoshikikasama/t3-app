@@ -29,7 +29,11 @@ export const recallRouter = createTRPCRouter({
       }).optional(),
     )
     .query(async ({ ctx, input }) => {
-      // Check if user is admin
+      // Check if user exists and is admin
+      if (!ctx.session?.user?.id) {
+        throw new Error("Unauthorized - Login required");
+      }
+
       const user = await ctx.db.user.findUnique({
         where: { id: ctx.session.user.id },
       });
@@ -76,7 +80,11 @@ export const recallRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin
+      // Check if user exists and is admin
+      if (!ctx.session?.user?.id) {
+        throw new Error("Unauthorized - Login required");
+      }
+
       const user = await ctx.db.user.findUnique({
         where: { id: ctx.session.user.id },
       });

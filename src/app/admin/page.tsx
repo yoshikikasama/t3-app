@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
   const { data: recallRequests, isLoading, refetch } = api.recall.getAll.useQuery(
     { status: statusFilter },
     { 
-      enabled: !!session,
+      enabled: status === "authenticated",
       retry: false 
     }
   );
